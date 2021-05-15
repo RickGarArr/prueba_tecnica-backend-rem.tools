@@ -31,11 +31,11 @@ export async function editarFlujo(req: Request, res: Response) {
         const { nombre, apellidos, fecha_nacimiento, lugar_nacimiento, email, telefono } = req.body;
         Object.entries(req.files).forEach(async ([field, [file]]) => {
             if (field === 'video') {
-                await eliminarFlujoFile(uuid, flujoDB.video);
+                await eliminarFlujoFile(flujoDB.uuid, flujoDB.video);
                 flujoDB.video = (file as Express.Multer.File).filename;
             } else if (field === 'firma') {
-                await eliminarFlujoFile(uuid, flujoDB.firma);
-                flujoDB.video = (file as Express.Multer.File).filename;
+                await eliminarFlujoFile(flujoDB.uuid, flujoDB.firma);
+                flujoDB.firma = (file as Express.Multer.File).filename;
             }
         });
         if (nombre && nombre.trim() != '') {
@@ -77,9 +77,8 @@ export async function eliminarFlujo(req: Request, res: Response) {
     const uuid = (req as any).uuid
     try {
         const flujoDB = await Flujo.findOne({ uuid });
-        console.log(flujoDB);
         if (!flujoDB) throw new Error('No existe el flujo con uuid:' + uuid);
-        eliminarFlujoFolder(uuid).then(result => console.log(result)).catch(error => console.log(error));
+        await eliminarFlujoFolder(uuid);
         const resultDelete = await Flujo.findByIdAndDelete(flujoDB._id);
         if (resultDelete) {
             res.json({

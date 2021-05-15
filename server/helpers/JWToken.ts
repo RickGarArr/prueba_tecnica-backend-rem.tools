@@ -1,7 +1,7 @@
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 
 export function createJWT(payload: Object): string {
-    return jwt.sign(payload, `${process.env.SECRET}`, {expiresIn: '1h'});
+    return jwt.sign(payload, `${process.env.SECRET}`, {expiresIn: '5m'});
 }
 
 export function verifyJWT(token: string, callback: Function) {
